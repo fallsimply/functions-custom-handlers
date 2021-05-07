@@ -9,21 +9,31 @@ import (
 	"time"
 )
 
+// ReturnValue is a wrapper to generate ReturnValue json
 type ReturnValue struct {
 	Data string
 }
+
+// InvokeResponse is the response to the function host
+//
+// https://docs.microsoft.com/azure/azure-functions/functions-custom-handlers#response-payload
 type InvokeResponse struct {
 	Outputs     map[string]interface{}
 	Logs        []string
+	// $return in `function.json`
 	ReturnValue interface{}
 }
 
+// InvokeResponseStringReturnValue is InvokeResponse with a `string` ReturnValue field
 type InvokeResponseStringReturnValue struct {
 	Outputs     map[string]interface{}
 	Logs        []string
 	ReturnValue string
 }
 
+// InvokeRequest represents the request to the function
+//
+// https://docs.microsoft.com/azure/azure-functions/functions-custom-handlers#landing-content
 type InvokeRequest struct {
 	Data     map[string]interface{}
 	Metadata map[string]interface{}
@@ -203,6 +213,7 @@ func main() {
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/HttpTriggerStringReturnValue", httpTriggerHandlerStringReturnValue)
+	mux.HandleFunc("/HttpTriggerWithOutputs", httpTriggerHandler)
 	mux.HandleFunc("/QueueTrigger", queueTriggerHandler)
 	mux.HandleFunc("/BlobTrigger", blobTriggerHandler)
 	mux.HandleFunc("/QueueTriggerWithOutputs", queueTriggerWithOutputsHandler)
